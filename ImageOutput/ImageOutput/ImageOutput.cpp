@@ -1,6 +1,13 @@
 #include <iostream>
 #include <fstream>
-#include "vec3.h"
+#include "ray.cpp"
+
+vec3 color(const ray& r)
+{
+	vec3 unit_direction = unit_vector(r.direction());
+	float t = 0.5f * (unit_direction.y() + 1.0f);
+	return (1.0f - t) * vec3(1.0f, 1.0f, 1.0f) + t * vec3(0.5f, 0.7f, 1.0f);
+}
 
 int main()
 {
@@ -12,16 +19,24 @@ int main()
 
 	fileoutput << "P3\n" << nx << " " << ny << "\n255\n";
 
-
+	vec3 lower_left_corner(-2.0f, -1.0f, -1.0f);
+	vec3 horizontal(4.0f, 0.0f, 0.0f);
+	vec3 vertical(0.0f, 2.0f, 0.0f);
+	vec3 origin(0.0f, 0.0f, 0.0f);
 
 	for (int i = ny - 1; i >= 0; i--)
 	{
 		for (int j = 0; j < nx; j++)
 		{
-			vec3 colour(static_cast<float>(j) / static_cast<float>(nx), static_cast<float>(i) / static_cast<float>(ny), 0.2);
-			int ir = int(255.99 * colour.r());
-			int ig = int(255.99 * colour.g());
-			int ib = int(255.99 * colour.b());
+			float u = static_cast<float>(j) / static_cast<float>(nx);
+			float v = static_cast<float>(i) / static_cast<float>(ny);
+
+			ray r(origin, lower_left_corner + u * horizontal + v * vertical);
+			vec3 col(color(r));
+
+			int ir = int(255.99 * col.r());
+			int ig = int(255.99 * col.g());
+			int ib = int(255.99 * col.b());
 			fileoutput << ir << " " << ig << " " << ib << "\n";
 		}
 	}

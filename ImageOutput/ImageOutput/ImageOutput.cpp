@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include "vec3.h"
 
 int main()
 {
@@ -17,12 +18,10 @@ int main()
 	{
 		for (int j = 0; j < nx; j++)
 		{
-			float r = float(j) / float(nx);
-			float g = float(i) / float(ny);
-			float b = 0.2;
-			int ir = int(255.99 * r);
-			int ig = int(255.99 * g);
-			int ib = int(255.99 * b);
+			vec3 colour(static_cast<float>(j) / static_cast<float>(nx), static_cast<float>(i) / static_cast<float>(ny), 0.2);
+			int ir = int(255.99 * colour.r());
+			int ig = int(255.99 * colour.g());
+			int ib = int(255.99 * colour.b());
 			fileoutput << ir << " " << ig << " " << ib << "\n";
 		}
 	}

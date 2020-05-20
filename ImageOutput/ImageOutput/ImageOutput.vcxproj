@@ -147,6 +147,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="camera.cpp" />
     <ClCompile Include="hitable.cpp" />
     <ClCompile Include="hitable_list.cpp" />
     <ClCompile Include="ImageOutput.cpp" />
@@ -158,6 +159,7 @@
     <None Include="image.ppm" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="camera.h" />
     <ClInclude Include="hitable.h" />
     <ClInclude Include="hitable_list.h" />
     <ClInclude Include="ray.h" />

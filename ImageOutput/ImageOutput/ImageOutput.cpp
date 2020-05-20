@@ -5,12 +5,28 @@
 #include "sphere.h"
 #include "camera.h"
 
+vec3 random_in_unit_sphere()
+{
+	vec3 p;
+
+	do {
+		float random1 = static_cast<float>(rand()) / static_cast<float>(RAND_MAX + 1);
+		float random2 = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+		float random3 = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+
+		p = 2.0f * vec3(random1, random1, random1) - vec3(1.0f, 1.0f, 1.0f);
+	} 
+	while (p.squared_length() >= 1.0);
+	return p;
+}
+
 vec3 color(const ray& r, hitable *world)
 {
 	hit_record rec;
-	if (world->hit(r, 0.0, FLT_MAX, rec )) 
+	if (world->hit(r, 0.001, FLT_MAX, rec )) 
 	{
-		return 0.5 * vec3(rec.normal.x() + 1, rec.normal.y() + 1, rec.normal.z() + 1);
+		vec3 target = rec.p + rec.normal + random_in_unit_sphere();
+		return 0.5f * color( ray(rec.p, target - rec.p), world);
 	}
 	else {
 		vec3 unit_direction = unit_vector(r.direction());
@@ -50,13 +66,15 @@ int main()
 			float u = static_cast<float>(j + random) / static_cast<float>(nx);
 			float v = static_cast<float>(i + random) / static_cast<float>(ny);
 			ray r = cam.get_ray(u, v);
-			
+
 			col += color(r, world);
 
 			}
 			
-
 			col /= static_cast<float>(ns);
+
+			col = vec3(sqrt(col[0]), sqrt(col[1]), sqrt(col[2]));
+
 			int ir = int(255.99 * col.r());
 			int ig = int(255.99 * col.g());
 			int ib = int(255.99 * col.b());

@@ -1,7 +1,4 @@
-#ifndef VEC3H
-#define VEC3H
-
-
+#pragma once
 #include "vec3.h"
 
 
@@ -124,4 +121,3 @@ inline vec3 unit_vector(vec3 v)
     return v / v.length();
 }
 
-#endif // !VEC3H

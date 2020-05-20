@@ -1,6 +1,4 @@
 #pragma once
-#ifndef RAYH
-#define RAYH
 #include "vec3.cpp"
 class ray
 {
@@ -13,4 +11,4 @@ public:
 	vec3 direction() const { return B; }
 	vec3 point(float t) const { return A + t * B; }
 };
-#endif
+

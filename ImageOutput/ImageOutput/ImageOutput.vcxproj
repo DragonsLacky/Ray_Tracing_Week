@@ -147,15 +147,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="hitable.cpp" />
+    <ClCompile Include="hitable_list.cpp" />
     <ClCompile Include="ImageOutput.cpp" />
     <ClCompile Include="ray.cpp" />
+    <ClCompile Include="sphere.cpp" />
     <ClCompile Include="vec3.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="image.ppm" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="hitable.h" />
+    <ClInclude Include="hitable_list.h" />
     <ClInclude Include="ray.h" />
+    <ClInclude Include="sphere.h" />
     <ClInclude Include="vec3.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

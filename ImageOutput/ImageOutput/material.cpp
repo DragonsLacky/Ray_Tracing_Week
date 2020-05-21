@@ -9,7 +9,7 @@ vec3 random_in_unit_sphere()
 		float random2 = static_cast<float>(rand()) / static_cast<float>(RAND_MAX + 1.0);
 		float random3 = static_cast<float>(rand()) / static_cast<float>(RAND_MAX + 1.0);
 
-		p = 2.0f * vec3(random1, random1, random1) - vec3(1.0f, 1.0f, 1.0f);
+		p = 2.0f * vec3(random1, random2, random3) - vec3(1.0f, 1.0f, 1.0f);
 	} while (p.squared_length() >= 1.0);
 	return p;
 }

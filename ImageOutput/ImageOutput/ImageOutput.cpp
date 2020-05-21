@@ -53,7 +53,13 @@ int main()
 	list[4] = new sphere(vec3(-1.0, 0.0f, -1.0f), -0.45, new dielectric(1.5));
 
 	hitable* world = new hitable_list(list, 5);
-	camera cam(vec3(-2, 2, 1), vec3(0, 0, -1), vec3(0, 1, 0), 20, nx / ny);
+
+	vec3 look_from(3.0f, 3.0f, 2.0f);
+	vec3 look_at(0.0f, 0.0f, -1.0f);
+	float dist_to_focus = (look_from - look_at).length();
+	float aperture = 2.0f;
+
+	camera cam(look_from, look_at, vec3(0.0f, 1.0f, 0.0f), 20, nx / ny, aperture, dist_to_focus);
 
 	std::srand(static_cast<float>(std::time(nullptr)));
 

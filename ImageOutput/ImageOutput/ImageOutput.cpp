@@ -5,7 +5,8 @@
 #include "sphere.h"
 #include "camera.h"
 #include "material.h"
-#include "texture.h"
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 
 vec3 color(const ray& r, hitable *world, int depth)
 {
@@ -96,6 +97,21 @@ hitable* two_perlin_spheres()
 	return new hitable_list(list, 2);
 }
 
+hitable* earth_image()
+{
+	int nx, ny, nn;
+	unsigned char* tex_data = stbi_load("earthmap.jpg", &nx, &ny, &nn, 0);
+	if (!tex_data) {
+		std::cout << "texture not loaded" << std::endl;
+	}
+	material* mat = new lambertian(new image_texture(tex_data, nx, ny));
+	hitable** list = new hitable * [1];
+
+	//list[0] = new sphere(vec3(0.0f, -1000.0f, 0.0f), 1000.0f, new lambertian(pertext));
+	list[0] = new sphere(vec3(0.0f, 0.0f, 0.0f), 2.0f, mat);
+	return new hitable_list(list, 1);
+}
+
 int main()
 {
 	int nx = 200;
@@ -119,7 +135,7 @@ int main()
 	list[3] = new sphere(vec3(-1.0, 0.0f, -1.0f), 0.5, new dielectric(1.5));
 	list[4] = new sphere(vec3(-1.0, 0.0f, -1.0f), -0.45, new dielectric(1.5));*/
 
-	hitable* world = two_perlin_spheres();
+	hitable* world = earth_image();
 
 	vec3 look_from(13.0f, 2.0f, 3.0f);
 	vec3 look_at(0.0f, 0.0f, 0.0f);

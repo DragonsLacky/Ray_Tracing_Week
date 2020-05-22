@@ -1,5 +1,7 @@
 #pragma once
 #include "hitable.h"
+#include <corecrt_math_defines.h>
+#include <math.h>
 
 class sphere : public hitable
 {
@@ -28,3 +30,5 @@ public:
 	float radius;
 	material* mat_ptr;
 };
+
+void get_sphere_uv(const vec3& p, float& u, float& v);

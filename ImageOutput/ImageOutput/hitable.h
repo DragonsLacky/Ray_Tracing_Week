@@ -7,11 +7,22 @@ class material;
 struct hit_record
 {
 	float t;
+	float u;
+	float v;
+
 	vec3 p;
 	vec3 normal;
+
+	bool face;
+
 	material *mat_ptr;
 };
 
+inline void set_face(const ray& r, const vec3& outward_normal, hit_record& record)
+{
+	record.face = dot(r.direction(), outward_normal) < 0;
+	record.normal = record.face ? outward_normal : -outward_normal;
+}
 class hitable
 {
 public:

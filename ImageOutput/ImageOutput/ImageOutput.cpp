@@ -127,11 +127,31 @@ hitable* simple_light()
 	return new hitable_list(list, 4);
 }
 
+hitable* cornell_box()
+{
+	hitable** list = new hitable * [6];
+	int i = 0;
+
+	material* red = new lambertian(new constant_texture(vec3(0.65f, 0.05f, 0.05f)));
+	material* white = new lambertian(new constant_texture(vec3(0.73f, 0.73f, 0.73f)));
+	material* green = new lambertian(new constant_texture(vec3(0.12f, 0.45f, 0.15f)));
+	material* light = new diffuse_light(new constant_texture(vec3(15.0f, 15.0f, 15.0f)));
+
+	list[i++] = new flip_normals( new yz_rectangle(0, 555, 0, 555, 555, green));
+	list[i++] = new yz_rectangle(0, 555, 0, 555, 0, red);
+	list[i++] = new xz_rectangle(213, 343, 227, 332, 554, light);
+	list[i++] = new flip_normals(new xz_rectangle(0, 555, 0, 555, 555, white));
+	list[i++] = new xz_rectangle(0, 555, 0, 555, 0, white);
+	list[i++] = new flip_normals(new xy_rectangle(0, 555, 0, 555, 555, white));
+
+	return new hitable_list(list, i);
+}
+
 int main()
 {
 	int nx = 200;
 	int ny = 100;
-	int ns = 100;
+	int ns = 1000;
 
 	std::ofstream fileoutput;
 	fileoutput.open("image.ppm");
@@ -150,14 +170,14 @@ int main()
 	list[3] = new sphere(vec3(-1.0, 0.0f, -1.0f), 0.5, new dielectric(1.5));
 	list[4] = new sphere(vec3(-1.0, 0.0f, -1.0f), -0.45, new dielectric(1.5));*/
 
-	hitable* world = simple_light();
+	hitable* world = cornell_box();
 
-	vec3 look_from(26.0f, 3.0f, 6.0f);
-	vec3 look_at(0.0f, 2.0f, 0.0f);
+	vec3 look_from(278.0f, 278.0f, -800.0f);
+	vec3 look_at(278.0f, 278.0f, 0.0f);
 	float dist_to_focus = 10.0f;
 	float aperture = 0.0f;
 
-	camera cam(look_from, look_at, vec3(0.0f, 1.0f, 0.0f), 20, nx / ny, aperture, dist_to_focus, 0.0f, 1.0f);
+	camera cam(look_from, look_at, vec3(0.0f, 1.0f, 0.0f), 40, nx / ny, aperture, dist_to_focus, 0.0f, 1.0f);
 	
 	int count = 0;
 

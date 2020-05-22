@@ -29,11 +29,56 @@ vec3 color(const ray& r, hitable *world, int depth)
 	}
 }
 
+float get_random_num()
+{
+	return static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+}
+
+hitable* create_scene()
+{
+	int n = 500;
+	hitable **list = new  hitable*[n + 1];
+
+	list[0] = new sphere(vec3(0.0f, -1000.0f, 0.0f), 1000, new lambertian(vec3(0.5f, 0.5f, 0.5f)));
+	int i = 1;
+	for (int a = -11; a < 11; a++)
+	{
+		for (int b = -11; b < 11; b++)
+		{
+			float choose_mat = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+			
+			vec3 center(a + 0.9 * get_random_num(), 0.2, b + 0.9 * get_random_num());
+
+			if ((center - vec3(4.0f, 0.2f, 0.0f)).length() > 0.9f) 
+			{
+				if (choose_mat < 0.8)
+				{
+					list[i++] = new sphere(center, 0.2, new lambertian(vec3(get_random_num() * get_random_num(), get_random_num() * get_random_num(), get_random_num() * get_random_num())));
+				}
+				else if (choose_mat < 0.95) 
+				{
+					list[i++] = new sphere(center, 0.2, new metal(vec3(0.5 * (1 +get_random_num()), 0.5 * (1 + get_random_num()), 0.5 * (1 + get_random_num())),0.5 * get_random_num()));
+
+				}
+				else {
+					list[i++] = new sphere(center, 0.2, new dielectric(1.5));
+				}
+			}
+		}
+	}
+
+	list[i++] = new sphere(vec3(0.0f, 1.0f, 0.0f), 1.0f, new dielectric(1.5));
+	list[i++] = new sphere(vec3(-4.0f, 1.0f, 0.0f), 1.0f, new lambertian(vec3(0.4f, 0.2f, 0.1f)));
+	list[i++] = new sphere(vec3(4.0f, 1.0f, 0.0f), 1.0f, new metal(vec3(0.7f, 0.6f, 0.5f), 0.0f));
+
+	return new hitable_list(list, i);
+}
+
 int main()
 {
-	int nx = 200;
-	int ny = 100;
-	int ns = 100;
+	int nx = 1280;
+	int ny = 860;
+	int ns = 10;
 
 	std::ofstream fileoutput;
 	fileoutput.open("image.ppm");
@@ -42,22 +87,22 @@ int main()
 
 	fileoutput << "P3\n" << nx << " " << ny << "\n255\n";
 
-	hitable* list[5];
+	//hitable* list[5];
 	//list[0] = new sphere(vec3(-R, 0, -1), R, new lambertian(vec3(0, 0, 1)));
 	//list[1] = new sphere(vec3( R, 0, -1), R, new lambertian(vec3(1, 0, 0)));
 
-	list[0] = new sphere(vec3(0, 0, -1), 0.5, new lambertian(vec3(0.1, 0.2, 0.5)));
+	/*list[0] = new sphere(vec3(0, 0, -1), 0.5, new lambertian(vec3(0.1, 0.2, 0.5)));
 	list[1] = new sphere(vec3(0, -100.5, -1), 100, new lambertian(vec3(0.8, 0.8, 0.0)));
 	list[2] = new sphere(vec3(1.0f, 0.0f, -1.0f), 0.5, new metal(vec3(0.8, 0.6, 0.2),0.3));
 	list[3] = new sphere(vec3(-1.0, 0.0f, -1.0f), 0.5, new dielectric(1.5));
-	list[4] = new sphere(vec3(-1.0, 0.0f, -1.0f), -0.45, new dielectric(1.5));
+	list[4] = new sphere(vec3(-1.0, 0.0f, -1.0f), -0.45, new dielectric(1.5));*/
 
-	hitable* world = new hitable_list(list, 5);
+	hitable* world = create_scene();
 
-	vec3 look_from(3.0f, 3.0f, 2.0f);
-	vec3 look_at(0.0f, 0.0f, -1.0f);
-	float dist_to_focus = (look_from - look_at).length();
-	float aperture = 2.0f;
+	vec3 look_from(13.0f, 2.0f, 3.0f);
+	vec3 look_at(0.0f, 0.0f, 0.0f);
+	float dist_to_focus = 10.0f;
+	float aperture = 0.1f;
 
 	camera cam(look_from, look_at, vec3(0.0f, 1.0f, 0.0f), 20, nx / ny, aperture, dist_to_focus);
 
@@ -87,6 +132,7 @@ int main()
 			int ig = int(255.99 * col.g());
 			int ib = int(255.99 * col.b());
 			fileoutput << ir << " " << ig << " " << ib << "\n";
+			std::cout << ir << " " << ig << " " << ib << std::endl;
 		}
 	}
 

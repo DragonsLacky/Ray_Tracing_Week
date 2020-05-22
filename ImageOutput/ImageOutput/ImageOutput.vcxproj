@@ -161,6 +161,7 @@
     <ClCompile Include="material.cpp" />
     <ClCompile Include="perlin.cpp" />
     <ClCompile Include="ray.cpp" />
+    <ClCompile Include="rectangle.cpp" />
     <ClCompile Include="sphere.cpp" />
     <ClCompile Include="texture.cpp" />
     <ClCompile Include="vec3.cpp" />
@@ -172,6 +173,7 @@
     <ClInclude Include="boundary.h" />
     <ClInclude Include="bvh.h" />
     <ClInclude Include="camera.h" />
+    <ClInclude Include="rectangle.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="hitable.h" />
     <ClInclude Include="hitable_list.h" />

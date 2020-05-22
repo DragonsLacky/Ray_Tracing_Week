@@ -57,6 +57,9 @@
     <ClCompile Include="perlin.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="rectangle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="image.ppm">
@@ -98,6 +101,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="stb_image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="rectangle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -97,3 +97,17 @@ bool dielectric::scatter(const ray& r_in, const hit_record& rec, vec3& attenuati
 	}
 	return true;
 }
+
+vec3 material::emitted(float u, float v, const vec3& p) const
+{
+	return vec3(0.0f, 0.0f, 0.0f);
+}
+
+bool diffuse_light::scatter(const ray& r_in, const hit_record& rec, vec3& attenuation, ray& scattered) const
+{
+	return false;
+}
+vec3 diffuse_light::emitted(float u, float v, const vec3& p) const
+{
+	return emission->value(u, v, p);
+}

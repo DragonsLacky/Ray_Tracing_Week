@@ -5,6 +5,7 @@
 #include "sphere.h"
 #include "camera.h"
 #include "material.h"
+#include "rectangle.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
@@ -15,18 +16,20 @@ vec3 color(const ray& r, hitable *world, int depth)
 	{
 		ray scattered;
 		vec3 attenuation;
+		vec3 emission = rec.mat_ptr->emitted(rec.u, rec.v, rec.p);
 		if (depth < 50 && rec.mat_ptr->scatter(r, rec, attenuation, scattered))
 		{
-			return attenuation * color(scattered, world, depth + 1);
+			return emission + attenuation * color(scattered, world, depth + 1);
 		}
 		else {
-			return vec3(0.0f, 0.0f, 0.0f);
+			return emission;
 		}
 	}
 	else {
-		vec3 unit_direction = unit_vector(r.direction());
+		/*vec3 unit_direction = unit_vector(r.direction());
 		float t = 0.5f * (unit_direction.y() + 1.0f);
-		return (1.0f - t) * vec3(1.0f, 1.0f, 1.0f) + t * vec3(0.5f, 0.7f, 1.0f);
+		return (1.0f - t) * vec3(1.0f, 1.0f, 1.0f) + t * vec3(0.5f, 0.7f, 1.0f);*/
+		return vec3(0.0f, 0.0f, 0.0f);
 	}
 }
 
@@ -112,6 +115,18 @@ hitable* earth_image()
 	return new hitable_list(list, 1);
 }
 
+hitable* simple_light()
+{
+	texture* pertext = new noise_texture(4);
+	hitable** list = new hitable * [4];
+
+	list[0] = new sphere(vec3(0.0f, -1000.0f, 0.0f), 1000.0f, new lambertian(pertext));
+	list[1] = new sphere(vec3(0.0f, 2.0f, 0.0f), 2.0f, new lambertian(pertext));
+	list[2] = new sphere(vec3(0.0f, 7.0f, 0.0f), 2.0f, new diffuse_light(new constant_texture(vec3(4.0f, 4.0f, 4.0f))));
+	list[3] = new xy_rectangle(3.0f, 5.0f, 1.0f, 3.0f, -2.0f, new diffuse_light(new constant_texture(vec3(4.0f, 4.0f, 4.0f))));
+	return new hitable_list(list, 4);
+}
+
 int main()
 {
 	int nx = 200;
@@ -135,10 +150,10 @@ int main()
 	list[3] = new sphere(vec3(-1.0, 0.0f, -1.0f), 0.5, new dielectric(1.5));
 	list[4] = new sphere(vec3(-1.0, 0.0f, -1.0f), -0.45, new dielectric(1.5));*/
 
-	hitable* world = earth_image();
+	hitable* world = simple_light();
 
-	vec3 look_from(13.0f, 2.0f, 3.0f);
-	vec3 look_at(0.0f, 0.0f, 0.0f);
+	vec3 look_from(26.0f, 3.0f, 6.0f);
+	vec3 look_at(0.0f, 2.0f, 0.0f);
 	float dist_to_focus = 10.0f;
 	float aperture = 0.0f;
 

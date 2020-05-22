@@ -17,10 +17,12 @@ ray camera::get_ray(float s, float t)
 {
 	vec3 rd = lens_radius * random_in_unit_disk();
 	vec3 offset = u * rd.x() + v * rd.y();
-	return ray(origin + offset, lower_left_corner + s * horizontal + t * vertical - origin - offset);
+	float random = static_cast<float>(rand()) / static_cast<float>(RAND_MAX + 1);
+	float time = time0 + random * (time1 - time0);
+	return ray(origin + offset, lower_left_corner + s * horizontal + t * vertical - origin - offset, time);
 }
 
-camera::camera(vec3 look_from, vec3 look_at, vec3 v_up, float v_fov, float aspect, float aperture, float focus_dist)
+camera::camera(vec3 look_from, vec3 look_at, vec3 v_up, float v_fov, float aspect, float aperture, float focus_dist,float t0, float t1)
 {
 	lens_radius = aperture / 2;
 
@@ -33,6 +35,9 @@ camera::camera(vec3 look_from, vec3 look_at, vec3 v_up, float v_fov, float aspec
 	w = unit_vector(look_from - look_at);
 	u = unit_vector(cross(v_up, w));
 	v = cross(w, u);
+
+	time0 = t0;
+	time1 = t1;
 
 	//lower_left_corner = vec3(-half_width, -half_height, -1.0f);
 	lower_left_corner = origin - half_width * focus_dist * u - half_height * focus_dist * v - focus_dist * w;

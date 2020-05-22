@@ -31,7 +31,7 @@ vec3 color(const ray& r, hitable *world, int depth)
 
 float get_random_num()
 {
-	return static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+	return static_cast<float>(rand()) / static_cast<float>(RAND_MAX + 1);
 }
 
 hitable* create_scene()
@@ -53,7 +53,7 @@ hitable* create_scene()
 			{
 				if (choose_mat < 0.8)
 				{
-					list[i++] = new sphere(center, 0.2, new lambertian(vec3(get_random_num() * get_random_num(), get_random_num() * get_random_num(), get_random_num() * get_random_num())));
+					list[i++] = new moving_sphere(center, center + vec3(0.0f, 0.5f * get_random_num(), 0.0f), 0.0f, 1.0f,  0.2f, new lambertian(vec3(get_random_num() * get_random_num(), get_random_num() * get_random_num(), get_random_num() * get_random_num())));
 				}
 				else if (choose_mat < 0.95) 
 				{
@@ -76,9 +76,9 @@ hitable* create_scene()
 
 int main()
 {
-	int nx = 1280;
-	int ny = 860;
-	int ns = 10;
+	int nx = 200;
+	int ny = 100;
+	int ns = 40;
 
 	std::ofstream fileoutput;
 	fileoutput.open("image.ppm");
@@ -104,7 +104,7 @@ int main()
 	float dist_to_focus = 10.0f;
 	float aperture = 0.1f;
 
-	camera cam(look_from, look_at, vec3(0.0f, 1.0f, 0.0f), 20, nx / ny, aperture, dist_to_focus);
+	camera cam(look_from, look_at, vec3(0.0f, 1.0f, 0.0f), 20, nx / ny, aperture, dist_to_focus, 0.0f, 1.0f);
 
 	std::srand(static_cast<float>(std::time(nullptr)));
 

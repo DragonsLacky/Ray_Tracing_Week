@@ -8,7 +8,10 @@ vec3 random_in_unit_disk();
 class camera
 {
 public:
-	camera(vec3 look_from, vec3 look_at, vec3 v_up, float v_fov, float aspect, float aperture, float focus_dist);
+	camera(vec3 look_from, vec3 look_at, vec3 v_up,
+		float v_fov, float aspect,
+		float aperture, float focus_dist,
+		float t0, float t1);
 	ray get_ray(float u, float v);
 	
 	vec3 origin;
@@ -16,6 +19,7 @@ public:
 	vec3 horizontal;
 	vec3 vertical;
 	vec3 u, v, w;
+	float time0, time1;
 	float lens_radius;
 };
 

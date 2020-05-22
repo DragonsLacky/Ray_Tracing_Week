@@ -5,7 +5,7 @@
 #include "sphere.h"
 #include "camera.h"
 #include "material.h"
-
+#include "texture.h"
 
 vec3 color(const ray& r, hitable *world, int depth)
 {
@@ -39,7 +39,8 @@ hitable* create_scene()
 	int n = 500;
 	hitable **list = new  hitable*[n + 1];
 
-	list[0] = new sphere(vec3(0.0f, -1000.0f, 0.0f), 1000, new lambertian(vec3(0.5f, 0.5f, 0.5f)));
+	texture* checkered = new checkered_texture(new constant_texture(vec3(0.2f, 0.3f, 0.1f)), new constant_texture(vec3(0.9f, 0.9f, 0.9f)));
+	list[0] = new sphere(vec3(0.0f, -1000.0f, 0.0f), 1000, new lambertian(checkered));
 	int i = 1;
 	for (int a = -11; a < 11; a++)
 	{
@@ -53,7 +54,7 @@ hitable* create_scene()
 			{
 				if (choose_mat < 0.8)
 				{
-					list[i++] = new moving_sphere(center, center + vec3(0.0f, 0.5f * get_random_num(), 0.0f), 0.0f, 1.0f,  0.2f, new lambertian(vec3(get_random_num() * get_random_num(), get_random_num() * get_random_num(), get_random_num() * get_random_num())));
+					list[i++] = new moving_sphere(center, center + vec3(0.0f, 0.5f * get_random_num(), 0.0f), 0.0f, 1.0f,  0.2f, new lambertian(new constant_texture(vec3(get_random_num() * get_random_num(), get_random_num() * get_random_num(), get_random_num() * get_random_num()))));
 				}
 				else if (choose_mat < 0.95) 
 				{
@@ -68,16 +69,27 @@ hitable* create_scene()
 	}
 
 	list[i++] = new sphere(vec3(0.0f, 1.0f, 0.0f), 1.0f, new dielectric(1.5));
-	list[i++] = new sphere(vec3(-4.0f, 1.0f, 0.0f), 1.0f, new lambertian(vec3(0.4f, 0.2f, 0.1f)));
+	list[i++] = new sphere(vec3(-4.0f, 1.0f, 0.0f), 1.0f, new lambertian(new constant_texture(vec3(0.4f, 0.2f, 0.1f))));
 	list[i++] = new sphere(vec3(4.0f, 1.0f, 0.0f), 1.0f, new metal(vec3(0.7f, 0.6f, 0.5f), 0.0f));
 
 	return new hitable_list(list, i);
 }
 
+hitable* two_spheres()
+{
+	texture* checkered = new checkered_texture(new constant_texture(vec3(0.2f, 0.3f, 0.1f)), new constant_texture(vec3(0.9f, 0.9f, 0.9f)));
+	int n = 50;
+	hitable** list = new hitable * [n + 1];
+	list[0] = new sphere(vec3(0.0f, -10.0f, 0.0f), 10.0f, new lambertian(checkered));
+	list[1] = new sphere(vec3(0.0f, 10.0f, 0.0f), 10.0f, new lambertian(checkered));
+	
+	return new hitable_list(list, 2);
+}
+
 int main()
 {
-	int nx = 100;
-	int ny = 50;
+	int nx = 200;
+	int ny = 100;
 	int ns = 100;
 
 	std::ofstream fileoutput;
@@ -97,18 +109,16 @@ int main()
 	list[3] = new sphere(vec3(-1.0, 0.0f, -1.0f), 0.5, new dielectric(1.5));
 	list[4] = new sphere(vec3(-1.0, 0.0f, -1.0f), -0.45, new dielectric(1.5));*/
 
-	hitable* world = create_scene();
+	hitable* world = two_spheres();
 
 	vec3 look_from(13.0f, 2.0f, 3.0f);
 	vec3 look_at(0.0f, 0.0f, 0.0f);
 	float dist_to_focus = 10.0f;
-	float aperture = 0.1f;
+	float aperture = 0.0f;
 
 	camera cam(look_from, look_at, vec3(0.0f, 1.0f, 0.0f), 20, nx / ny, aperture, dist_to_focus, 0.0f, 1.0f);
 	
 	int count = 0;
-
-	std::srand(static_cast<float>(std::time(nullptr)));
 
 	for (int i = ny - 1; i >= 0; i--)
 	{
@@ -117,7 +127,7 @@ int main()
 			vec3 col(0.0f, 0.0f, 0.0f);
 			for (int s = 0; s < ns; s++)
 			{
-			float random = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+			float random = static_cast<float>(rand()) / static_cast<float>(RAND_MAX + 1);
 			float u = static_cast<float>(j + random) / static_cast<float>(nx);
 			float v = static_cast<float>(i + random) / static_cast<float>(ny);
 			ray r = cam.get_ray(u, v);

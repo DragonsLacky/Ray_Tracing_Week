@@ -76,9 +76,9 @@ hitable* create_scene()
 
 int main()
 {
-	int nx = 200;
-	int ny = 100;
-	int ns = 40;
+	int nx = 100;
+	int ny = 50;
+	int ns = 100;
 
 	std::ofstream fileoutput;
 	fileoutput.open("image.ppm");
@@ -105,6 +105,8 @@ int main()
 	float aperture = 0.1f;
 
 	camera cam(look_from, look_at, vec3(0.0f, 1.0f, 0.0f), 20, nx / ny, aperture, dist_to_focus, 0.0f, 1.0f);
+	
+	int count = 0;
 
 	std::srand(static_cast<float>(std::time(nullptr)));
 
@@ -132,7 +134,7 @@ int main()
 			int ig = int(255.99 * col.g());
 			int ib = int(255.99 * col.b());
 			fileoutput << ir << " " << ig << " " << ib << "\n";
-			std::cout << ir << " " << ig << " " << ib << std::endl;
+			std::cout << count++ << std::endl;
 		}
 	}
 

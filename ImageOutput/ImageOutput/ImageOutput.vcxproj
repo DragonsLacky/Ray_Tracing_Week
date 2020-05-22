@@ -151,6 +151,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="boundary.cpp" />
+    <ClCompile Include="bvh.cpp" />
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="hitable.cpp" />
     <ClCompile Include="hitable_list.cpp" />
@@ -164,6 +166,8 @@
     <None Include="image.ppm" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="boundary.h" />
+    <ClInclude Include="bvh.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="hitable.h" />
     <ClInclude Include="hitable_list.h" />

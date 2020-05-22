@@ -81,3 +81,18 @@ bool moving_sphere::hit(const ray& r, float t_min, float t_max, hit_record& rec)
 	}
 	return false;
 }
+bool sphere::bounding_box(float t0, float t1, boundary& box) const
+{
+	box = boundary(center - vec3(radius, radius, radius), center + vec3(radius, radius, radius));
+	return true;
+}
+
+bool moving_sphere::bounding_box(float t0, float t1, boundary& box) const
+{
+	boundary box0 = boundary(center(t0) - vec3(radius, radius, radius), center(t0) + vec3(radius, radius, radius));
+	boundary box1 = boundary(center(t1) - vec3(radius, radius, radius), center(t1) + vec3(radius, radius, radius));
+
+	box = surrounding_box(box0, box1);
+	return true;
+}
+

@@ -86,6 +86,16 @@ hitable* two_spheres()
 	return new hitable_list(list, 2);
 }
 
+hitable* two_perlin_spheres()
+{
+	texture* pertext = new noise_texture(4);
+	hitable** list = new hitable*[2];
+
+	list[0] = new sphere(vec3(0.0f, -1000.0f, 0.0f), 1000.0f, new lambertian(pertext));
+	list[1] = new sphere(vec3(0.0f, 2.0f, 0.0f), 2.0f, new lambertian(pertext));
+	return new hitable_list(list, 2);
+}
+
 int main()
 {
 	int nx = 200;
@@ -109,7 +119,7 @@ int main()
 	list[3] = new sphere(vec3(-1.0, 0.0f, -1.0f), 0.5, new dielectric(1.5));
 	list[4] = new sphere(vec3(-1.0, 0.0f, -1.0f), -0.45, new dielectric(1.5));*/
 
-	hitable* world = two_spheres();
+	hitable* world = two_perlin_spheres();
 
 	vec3 look_from(13.0f, 2.0f, 3.0f);
 	vec3 look_at(0.0f, 0.0f, 0.0f);

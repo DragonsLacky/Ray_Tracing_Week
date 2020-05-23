@@ -10,6 +10,7 @@
 #include "stb_image.h"
 #include "box.h"
 #include "transformations.h"
+#include "volume.h"
 
 vec3 color(const ray& r, hitable *world, int depth)
 {
@@ -131,7 +132,7 @@ hitable* simple_light()
 
 hitable* cornell_box()
 {
-	hitable** list = new hitable * [6];
+	hitable** list = new hitable * [50];
 	int i = 0;
 
 	material* red = new lambertian(new constant_texture(vec3(0.65f, 0.05f, 0.05f)));
@@ -151,6 +152,32 @@ hitable* cornell_box()
 	
 	list[i++] = new translate(new rotate_y(new box(vec3(0.0, 0.0, 0.0), vec3(165, 165, 165), white), -18), vec3(130, 0, 65));
 	list[i++] = new translate(new rotate_y(new box(vec3(0.0, 0.0, 0.0), vec3(165, 330, 165), white), 15), vec3(265, 0, 295));
+
+	return new hitable_list(list, i);
+}
+
+hitable* conrnell_volume()
+{
+	hitable** list = new hitable * [50];
+	int i = 0;
+
+	material* red = new lambertian(new constant_texture(vec3(0.65f, 0.05f, 0.05f)));
+	material* white = new lambertian(new constant_texture(vec3(0.73f, 0.73f, 0.73f)));
+	material* green = new lambertian(new constant_texture(vec3(0.12f, 0.45f, 0.15f)));
+	material* light = new diffuse_light(new constant_texture(vec3(7.0f, 7.0f, 7.0f)));
+
+	list[i++] = new flip_normals(new yz_rectangle(0, 555, 0, 555, 555, green));
+	list[i++] = new yz_rectangle(0, 555, 0, 555, 0, red);
+	list[i++] = new xz_rectangle(113, 443, 127, 432, 554, light);
+	list[i++] = new flip_normals(new xz_rectangle(0, 555, 0, 555, 555, white));
+	list[i++] = new xz_rectangle(0, 555, 0, 555, 0, white);
+	list[i++] = new flip_normals(new xy_rectangle(0, 555, 0, 555, 555, white));
+
+	//list[i++] = new box(vec3(130, 0, 65), vec3(295, 165, 230), white);
+	//list[i++] = new box(vec3(265, 0, 295), vec3(430, 330, 460), white);
+
+	list[i++] = new constant_volume( new translate(new rotate_y(new box(vec3(0.0, 0.0, 0.0), vec3(165, 165, 165), white), -18), vec3(130, 0, 65)), 0.01, new constant_texture(vec3(1.0f, 1.0f, 1.0f)));
+	list[i++] = new constant_volume(new translate(new rotate_y(new box(vec3(0.0, 0.0, 0.0), vec3(165, 330, 165), white), 15), vec3(265, 0, 295)), 0.01, new constant_texture(vec3(0.0f, 0.0f, 0.0f)));
 
 	return new hitable_list(list, i);
 }
@@ -178,7 +205,7 @@ int main()
 	list[3] = new sphere(vec3(-1.0, 0.0f, -1.0f), 0.5, new dielectric(1.5));
 	list[4] = new sphere(vec3(-1.0, 0.0f, -1.0f), -0.45, new dielectric(1.5));*/
 
-	hitable* world = cornell_box();
+	hitable* world = conrnell_volume();
 
 	vec3 look_from(278.0f, 278.0f, -800.0f);
 	vec3 look_at(278.0f, 278.0f, 0.0f);

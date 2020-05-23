@@ -47,6 +47,14 @@ public:
 	texture* emission;
 };
 
+class isotropic : public material
+{
+public:
+	isotropic(texture* t) : albedo(t) {}
+	virtual bool scatter(const ray& r_in, const hit_record& rec, vec3& attenuation, ray& scattered) const;
+	texture* albedo;
+};
+
 vec3 random_in_unit_sphere();
 vec3 reflect(const vec3& v, const vec3& n);
 bool refract(const vec3& v, const vec3& n, float ni_over_nt, vec3& refracted);

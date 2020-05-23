@@ -1,6 +1,6 @@
 #pragma once
 #include "sphere.h"
-
+#include <math.h>
 
 void get_sphere_uv(const vec3& p, float& u, float& v)
 {

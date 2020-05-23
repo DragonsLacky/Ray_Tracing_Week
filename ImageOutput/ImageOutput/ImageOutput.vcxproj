@@ -167,6 +167,7 @@
     <ClCompile Include="texture.cpp" />
     <ClCompile Include="transformations.cpp" />
     <ClCompile Include="vec3.cpp" />
+    <ClCompile Include="volume.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="image.ppm" />
@@ -187,6 +188,7 @@
     <ClInclude Include="texture.h" />
     <ClInclude Include="transformations.h" />
     <ClInclude Include="vec3.h" />
+    <ClInclude Include="volume.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="earthmap.jpg" />

@@ -11,6 +11,7 @@
 #include "box.h"
 #include "transformations.h"
 #include "volume.h"
+#include "bvh.h"
 
 vec3 color(const ray& r, hitable *world, int depth)
 {
@@ -182,10 +183,60 @@ hitable* conrnell_volume()
 	return new hitable_list(list, i);
 }
 
+hitable* Full_scene()
+{
+	int nb = 20;
+	int b = 0, l = 0;;
+	hitable** list = new hitable * [30];
+	hitable** boxlist1 = new hitable * [10000];
+	hitable** boxlist2 = new hitable * [10000];
+	material* white = new lambertian(new constant_texture(vec3(0.73f, 0.73f, 0.73f)));
+	material* ground = new lambertian(new constant_texture(vec3(0.48, 0.83, 0.53)));
+	material* light = new diffuse_light(new constant_texture(vec3(7, 7, 7)));
+	for (int i = 0; i < nb; i++)
+	{
+		for (int j = 0; j < nb; j++)
+		{
+			float w = 100;
+			float x0 = -1000 + i * w;
+			float z0 = -1000 + j * w;
+			float y0 = 0;
+			float x1 = x0 + w;
+			float y1 = 100 * (get_random_num() + 0.01f);
+			float z1 = z0 + w;
+			boxlist1[b++] = new box(vec3(x0, y0, z0), vec3(x1, y1, z1), ground);
+		}
+	}
+	vec3 center(400, 400, 200);
+	list[l++] = new bvh_node(boxlist1, b, 0, 1);
+	list[l++] = new xz_rectangle(123, 423, 147, 412, 554, light);
+	list[l++] = new moving_sphere(center, center + vec3(30, 0, 0), 0, 1, 50, new lambertian(new constant_texture(vec3(0.7, 0.7, 0.1))));
+	list[l++] = new sphere(vec3(260, 150, 45), 50, new dielectric(1.5));
+	list[l++] = new sphere(vec3(0, 150, 145), 50, new metal(vec3(0.8, 0.8, 0.8), 10.0));
+	hitable* bounds = new sphere(vec3(360, 150, 145), 70, new dielectric(1.5));
+	list[l++] = bounds;
+
+	list[l++] = new constant_volume(bounds, 0.2, new constant_texture(vec3(0.2, 0.4, 0.9)));
+	list[l++] = new constant_volume(new sphere(vec3(0.0, 0.0, 0.0), 5000, new dielectric(1.5)), 0.001, new constant_texture(vec3(1.0, 1.0, 1.0)));
+	int nx, ny, nn;
+	unsigned char* tex_data = stbi_load("earthmap.jpg", &nx, &ny, &nn, 0);
+	material* mat = new lambertian(new image_texture(tex_data, nx, ny));
+	list[l++] = new sphere(vec3(400, 280, 400), 100, mat);
+	texture* pertex = new noise_texture(0.1);
+	list[l++] = new sphere(vec3(220, 280, 300), 80, new lambertian(pertex));
+	int ns = 1000;
+	for (int i = 0; i < ns; i++)
+	{
+		boxlist2[i] = new sphere(vec3(165 * get_random_num(), 165 * get_random_num(), 165 * get_random_num()), 10, white);
+	}
+	list[l++] = new translate(new rotate_y(new bvh_node(boxlist2, ns, 0.0, 1.0), 15), vec3(-100, 270, 395));
+	return new hitable_list(list, l);
+}
+
 int main()
 {
 	int nx = 200;
-	int ny = 100;
+	int ny =00;
 	int ns = 1000;
 
 	std::ofstream fileoutput;
@@ -205,9 +256,13 @@ int main()
 	list[3] = new sphere(vec3(-1.0, 0.0f, -1.0f), 0.5, new dielectric(1.5));
 	list[4] = new sphere(vec3(-1.0, 0.0f, -1.0f), -0.45, new dielectric(1.5));*/
 
-	hitable* world = conrnell_volume();
+	hitable* world = Full_scene();
 
-	vec3 look_from(278.0f, 278.0f, -800.0f);
+	/*vec3 look_from(278.0f, 278.0f, -800.0f);
+	vec3 look_at(278.0f, 278.0f, 0.0f);
+	float dist_to_focus = 10.0f;
+	float aperture = 0.0f;*/
+	vec3 look_from(478.0f, 278.0f, -600.0f);
 	vec3 look_at(278.0f, 278.0f, 0.0f);
 	float dist_to_focus = 10.0f;
 	float aperture = 0.0f;

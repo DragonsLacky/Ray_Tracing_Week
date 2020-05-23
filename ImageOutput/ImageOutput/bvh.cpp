@@ -2,12 +2,12 @@
 
 int box_compare(const hitable* a, const hitable* b, int axis)
 {
-	boundary box_left, box_right{};
-	if (!a->bounding_box(0.0f, 0.0f, box_left) || !b->bounding_box(0.0f, 0.0f, box_right))
+	boundary box_left, box_right;
+	if (!a->bounding_box(0, 0, box_left) || !b->bounding_box(0, 0, box_right))
 	{
 		std::cerr << "no bounding box in bvh_node constructor\n";
 	}
-	if (box_left.min()[axis] - box_right.min()[axis] < 0.0f)
+	if ((box_left).min()[axis] - (box_right).min()[axis] < 0.0f)
 	{
 		return -1;
 	}
@@ -18,15 +18,15 @@ int box_compare(const hitable* a, const hitable* b, int axis)
 }
 int box_x_compare(const void* a, const void* b)
 {
-	return box_compare((hitable*)a, (hitable*)b, 0);
+	return box_compare(*(hitable**)a, *(hitable**)b, 0);
 }
 int box_y_compare(const void* a, const void* b)
 {
-	return box_compare((hitable*)a, (hitable*)b, 1);
+	return box_compare(*(hitable**)a, *(hitable**)b, 1);
 }
 int box_z_compare(const void* a, const void* b)
 {
-	return box_compare((hitable*)a, (hitable*)b, 2);
+	return box_compare(*(hitable**)a, *(hitable**)b, 2);
 }
 
 bvh_node::bvh_node(hitable** l, int n, float time0, float time1)

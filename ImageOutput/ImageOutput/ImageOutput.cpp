@@ -8,6 +8,7 @@
 #include "rectangle.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+#include "box.h"
 
 vec3 color(const ray& r, hitable *world, int depth)
 {
@@ -143,6 +144,9 @@ hitable* cornell_box()
 	list[i++] = new flip_normals(new xz_rectangle(0, 555, 0, 555, 555, white));
 	list[i++] = new xz_rectangle(0, 555, 0, 555, 0, white);
 	list[i++] = new flip_normals(new xy_rectangle(0, 555, 0, 555, 555, white));
+
+	list[i++] = new box(vec3(130, 0, 65), vec3(295, 165, 230), white);
+	list[i++] = new box(vec3(265, 0, 295), vec3(430, 330, 460), white);
 
 	return new hitable_list(list, i);
 }

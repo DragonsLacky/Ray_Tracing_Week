@@ -1,7 +1,7 @@
 #pragma once
 #include "hitable.h"
 
-bool flip_normals::hit(const ray& r, float t_min, float t_max, hit_record& rec) const 
+bool flip_normals::hit(const ray& r, float t_min, float t_max, hit_record& rec) const
 {
 	if (ptr->hit(r, t_min, t_max, rec))
 	{

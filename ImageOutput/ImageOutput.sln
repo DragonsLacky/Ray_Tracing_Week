@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.29905.134
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ImageOutput", "ImageOutput\ImageOutput.vcxproj", "{C4C8C8BE-59B7-4A78-BD19-83C0E9FF722F}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Monte_Carlo", "Monte_Carlo\Monte_Carlo.vcxproj", "{C8FDF083-EB5D-4CBE-A26F-F3A9050C6D8D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +23,14 @@ Global
 		{C4C8C8BE-59B7-4A78-BD19-83C0E9FF722F}.Release|x64.Build.0 = Release|x64
 		{C4C8C8BE-59B7-4A78-BD19-83C0E9FF722F}.Release|x86.ActiveCfg = Release|Win32
 		{C4C8C8BE-59B7-4A78-BD19-83C0E9FF722F}.Release|x86.Build.0 = Release|Win32
+		{C8FDF083-EB5D-4CBE-A26F-F3A9050C6D8D}.Debug|x64.ActiveCfg = Debug|x64
+		{C8FDF083-EB5D-4CBE-A26F-F3A9050C6D8D}.Debug|x64.Build.0 = Debug|x64
+		{C8FDF083-EB5D-4CBE-A26F-F3A9050C6D8D}.Debug|x86.ActiveCfg = Debug|Win32
+		{C8FDF083-EB5D-4CBE-A26F-F3A9050C6D8D}.Debug|x86.Build.0 = Debug|Win32
+		{C8FDF083-EB5D-4CBE-A26F-F3A9050C6D8D}.Release|x64.ActiveCfg = Release|x64
+		{C8FDF083-EB5D-4CBE-A26F-F3A9050C6D8D}.Release|x64.Build.0 = Release|x64
+		{C8FDF083-EB5D-4CBE-A26F-F3A9050C6D8D}.Release|x86.ActiveCfg = Release|Win32
+		{C8FDF083-EB5D-4CBE-A26F-F3A9050C6D8D}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -45,16 +45,22 @@ bool refract(const vec3& v, const vec3& n, float ni_over_nt, vec3& refracted)
 	else return false;
 }
 
-bool lambertian::scatter(const ray& r_in, const hit_record& rec, vec3& attenuation, ray& scattered) const
+bool lambertian::scatter(const ray& r_in, const hit_record& rec, vec3& attenuation, ray& scattered, float& pdf) const
 {
-	vec3 target = rec.p + rec.normal + random_in_unit_sphere();
-	scattered = ray(rec.p, target - rec.p, r_in.time());
-	attenuation = albedo->value(0.0f, 0.0f ,rec.p);
+	vec3 direction;
+	do
+	{
+		direction = random_in_unit_sphere();
+	} while (dot(direction, rec.normal) < 0);
+	//vec3 target = rec.p + rec.normal + random_in_unit_sphere();
+	scattered = ray(rec.p, unit_vector(direction /*target - rec.p*/), r_in.time());
+	attenuation = albedo->value(rec.u, rec.v ,rec.p);
+	pdf =  0.5 * M_PI; //dot(rec.normal, scattered.direction()) / M_PI;
 	return true;
 }
 
 
-bool metal::scatter(const ray& r_in, const hit_record& rec, vec3& attenuation, ray& scattered) const
+bool metal::scatter(const ray& r_in, const hit_record& rec, vec3& attenuation, ray& scattered, float& pdf) const
 {
 	vec3 reflected = reflect(unit_vector(r_in.direction()), rec.normal);
 	scattered = ray(rec.p, reflected + fuzz * random_in_unit_sphere(), r_in.time());
@@ -62,7 +68,7 @@ bool metal::scatter(const ray& r_in, const hit_record& rec, vec3& attenuation, r
 	return (dot(scattered.direction(), rec.normal) > 0);
 }
 
-bool dielectric::scatter(const ray& r_in, const hit_record& rec, vec3& attenuation, ray& scattered) const
+bool dielectric::scatter(const ray& r_in, const hit_record& rec, vec3& attenuation, ray& scattered, float& pdf) const
 {
 	vec3 outward_normal;
 	vec3 reflected = reflect(r_in.direction(), rec.normal);
@@ -108,7 +114,7 @@ vec3 material::emitted(float u, float v, const vec3& p) const
 	return vec3(0.0f, 0.0f, 0.0f);
 }
 
-bool diffuse_light::scatter(const ray& r_in, const hit_record& rec, vec3& attenuation, ray& scattered) const
+bool diffuse_light::scatter(const ray& r_in, const hit_record& rec, vec3& attenuation, ray& scattered, float &pdf) const
 {
 	return false;
 }
@@ -117,9 +123,21 @@ vec3 diffuse_light::emitted(float u, float v, const vec3& p) const
 	return emission->value(u, v, p);
 }
 
-bool isotropic::scatter(const ray& r_in, const hit_record& rec, vec3& attenuation, ray& scattered) const
+bool isotropic::scatter(const ray& r_in, const hit_record& rec, vec3& attenuation, ray& scattered, float& pdf) const
 {
 	scattered = ray(rec.p, random_in_unit_sphere(), r_in.time());
 	attenuation = albedo->value(rec.u, rec.v, rec.p);
 	return false;
+}
+
+float material::scattering_pdf(const ray& r_in, const hit_record& rec, const ray& scattered) const
+{
+	return false;
+}
+
+float lambertian::scattering_pdf(const ray& r_in, const hit_record& rec, const ray& scattered) const
+{
+	float cosine = dot(rec.normal, unit_vector(scattered.direction()));
+	if (cosine < 0) cosine = 0;
+	return cosine / M_PI;
 }

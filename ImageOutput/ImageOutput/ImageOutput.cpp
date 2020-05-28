@@ -21,9 +21,10 @@ vec3 color(const ray& r, hitable *world, int depth)
 		ray scattered;
 		vec3 attenuation;
 		vec3 emission = rec.mat_ptr->emitted(rec.u, rec.v, rec.p);
-		if (depth < 50 && rec.mat_ptr->scatter(r, rec, attenuation, scattered))
+		float pdf;
+		if (depth < 50 && rec.mat_ptr->scatter(r, rec, attenuation, scattered, pdf))
 		{
-			return emission + attenuation * color(scattered, world, depth + 1);
+			return emission + attenuation * rec.mat_ptr->scattering_pdf(r,rec,scattered) * color(scattered, world, depth + 1) / pdf;
 		}
 		else {
 			return emission;
@@ -131,7 +132,7 @@ hitable* simple_light()
 	return new hitable_list(list, 4);
 }
 
-hitable* cornell_box()
+hitable* cornell_box(camera** cam, float aspect)
 {
 	hitable** list = new hitable * [50];
 	int i = 0;
@@ -151,6 +152,15 @@ hitable* cornell_box()
 	//list[i++] = new box(vec3(130, 0, 65), vec3(295, 165, 230), white);
 	//list[i++] = new box(vec3(265, 0, 295), vec3(430, 330, 460), white);
 	
+	vec3 look_from(278.0f, 278.0f, -800.0f);
+	vec3 look_at(278.0f, 278.0f, 0.0f);
+	float dist_to_focus = 10.0f;
+	float aperture = 0.0f;
+	float vfov = 40.0f;
+
+	*cam = new camera(look_from, look_at, vec3(0.0f, 1.0f, 0.0f), vfov, aspect, aperture, dist_to_focus, 0.0f, 1.0f);
+
+
 	list[i++] = new translate(new rotate_y(new box(vec3(0.0, 0.0, 0.0), vec3(165, 165, 165), white), -18), vec3(130, 0, 65));
 	list[i++] = new translate(new rotate_y(new box(vec3(0.0, 0.0, 0.0), vec3(165, 330, 165), white), 15), vec3(265, 0, 295));
 
@@ -235,7 +245,7 @@ hitable* Full_scene()
 
 int main()
 {
-	int nx = 200;
+	int nx = 100;
 	int ny = 100;
 	int ns = 1000;
 
@@ -255,20 +265,24 @@ int main()
 	list[2] = new sphere(vec3(1.0f, 0.0f, -1.0f), 0.5, new metal(vec3(0.8, 0.6, 0.2),0.3));
 	list[3] = new sphere(vec3(-1.0, 0.0f, -1.0f), 0.5, new dielectric(1.5));
 	list[4] = new sphere(vec3(-1.0, 0.0f, -1.0f), -0.45, new dielectric(1.5));*/
+	
+	camera** cam = new camera*[0];
 
-	hitable* world = Full_scene();
+	hitable* world = cornell_box(cam, nx / ny);
 
-	/*vec3 look_from(278.0f, 278.0f, -800.0f);
-	vec3 look_at(278.0f, 278.0f, 0.0f);
-	float dist_to_focus = 10.0f;
-	float aperture = 0.0f;*/
-	vec3 look_from(478.0f, 278.0f, -600.0f);
+	vec3 look_from(278.0f, 278.0f, -800.0f);
 	vec3 look_at(278.0f, 278.0f, 0.0f);
 	float dist_to_focus = 10.0f;
 	float aperture = 0.0f;
+	float vfov = 40.0f;
+	float aspect = nx / ny;
+	/*vec3 look_from(478.0f, 278.0f, -600.0f);
+	vec3 look_at(278.0f, 278.0f, 0.0f);
+	float dist_to_focus = 10.0f;
+	float aperture = 0.0f;*/
 
-	camera cam(look_from, look_at, vec3(0.0f, 1.0f, 0.0f), 40, nx / ny, aperture, dist_to_focus, 0.0f, 1.0f);
-	
+	//camera cam(look_from, look_at, vec3(0.0f, 1.0f, 0.0f), 40, nx / ny, aperture, dist_to_focus, 0.0f, 1.0f); 
+		;
 	int count = 0;
 
 	for (int i = ny - 1; i >= 0; i--)
@@ -281,7 +295,7 @@ int main()
 			float random = static_cast<float>(rand()) / static_cast<float>(RAND_MAX + 1);
 			float u = static_cast<float>(j + random) / static_cast<float>(nx);
 			float v = static_cast<float>(i + random) / static_cast<float>(ny);
-			ray r = cam.get_ray(u, v);
+			ray r = (*cam)->get_ray(u, v);
 			vec3 p = r.point(2.0);
 			col += color(r, world, 0);
 

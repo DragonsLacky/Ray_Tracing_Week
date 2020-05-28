@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Monte_Carlo", "Monte_Carlo\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Calculate_Integral", "Calculate_Integral\Calculate_Integral.vcxproj", "{959B5B44-7EBB-45F2-AB6A-23103ED619F6}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "random_dir", "random_dir\random_dir.vcxproj", "{65CE85E0-2EA9-4307-A7A2-AC557CB07D8C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -41,6 +43,14 @@ Global
 		{959B5B44-7EBB-45F2-AB6A-23103ED619F6}.Release|x64.Build.0 = Release|x64
 		{959B5B44-7EBB-45F2-AB6A-23103ED619F6}.Release|x86.ActiveCfg = Release|Win32
 		{959B5B44-7EBB-45F2-AB6A-23103ED619F6}.Release|x86.Build.0 = Release|Win32
+		{65CE85E0-2EA9-4307-A7A2-AC557CB07D8C}.Debug|x64.ActiveCfg = Debug|x64
+		{65CE85E0-2EA9-4307-A7A2-AC557CB07D8C}.Debug|x64.Build.0 = Debug|x64
+		{65CE85E0-2EA9-4307-A7A2-AC557CB07D8C}.Debug|x86.ActiveCfg = Debug|Win32
+		{65CE85E0-2EA9-4307-A7A2-AC557CB07D8C}.Debug|x86.Build.0 = Debug|Win32
+		{65CE85E0-2EA9-4307-A7A2-AC557CB07D8C}.Release|x64.ActiveCfg = Release|x64
+		{65CE85E0-2EA9-4307-A7A2-AC557CB07D8C}.Release|x64.Build.0 = Release|x64
+		{65CE85E0-2EA9-4307-A7A2-AC557CB07D8C}.Release|x86.ActiveCfg = Release|Win32
+		{65CE85E0-2EA9-4307-A7A2-AC557CB07D8C}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

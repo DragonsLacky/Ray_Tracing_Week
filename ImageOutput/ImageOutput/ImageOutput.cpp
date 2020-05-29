@@ -13,6 +13,11 @@
 #include "volume.h"
 #include "bvh.h"
 
+float get_random_num()
+{
+	return static_cast<float>(rand()) / static_cast<float>(RAND_MAX + 1);
+}
+
 vec3 color(const ray& r, hitable *world, int depth)
 {
 	hit_record rec;
@@ -20,10 +25,26 @@ vec3 color(const ray& r, hitable *world, int depth)
 	{
 		ray scattered;
 		vec3 attenuation;
-		vec3 emission = rec.mat_ptr->emitted(rec.u, rec.v, rec.p);
+		vec3 emission = rec.mat_ptr->emitted(r, rec, rec.u, rec.v, rec.p);
 		float pdf;
 		if (depth < 50 && rec.mat_ptr->scatter(r, rec, attenuation, scattered, pdf))
 		{
+			vec3 on_light = vec3(213 + get_random_num() * (343 - 213), 554, 227 + get_random_num() * (332 - 227));
+			vec3 to_light = on_light - rec.p;
+			float distance_sqr = to_light.squared_length();
+			to_light.make_unit_vector();
+			if (dot(to_light, rec.normal) < 0)
+			{
+				return emission;
+			}
+			float light_area = (343 - 213) * (332 - 227);
+			float light_cosine = fabs(to_light.y());
+			if (light_cosine < 0.000001)
+			{
+				return emission;
+			}
+			pdf = distance_sqr / (light_cosine * light_area);
+			scattered = ray(rec.p, to_light, r.time());
 			return emission + attenuation * rec.mat_ptr->scattering_pdf(r,rec,scattered) * color(scattered, world, depth + 1) / pdf;
 		}
 		else {
@@ -38,10 +59,7 @@ vec3 color(const ray& r, hitable *world, int depth)
 	}
 }
 
-float get_random_num()
-{
-	return static_cast<float>(rand()) / static_cast<float>(RAND_MAX + 1);
-}
+
 
 hitable* create_scene()
 {
@@ -144,7 +162,7 @@ hitable* cornell_box(camera** cam, float aspect)
 
 	list[i++] = new flip_normals( new yz_rectangle(0, 555, 0, 555, 555, green));
 	list[i++] = new yz_rectangle(0, 555, 0, 555, 0, red);
-	list[i++] = new xz_rectangle(213, 343, 227, 332, 554, light);
+	list[i++] = new flip_normals(new xz_rectangle(213, 343, 227, 332, 554, light));
 	list[i++] = new flip_normals(new xz_rectangle(0, 555, 0, 555, 555, white));
 	list[i++] = new xz_rectangle(0, 555, 0, 555, 0, white);
 	list[i++] = new flip_normals(new xy_rectangle(0, 555, 0, 555, 555, white));
@@ -247,7 +265,7 @@ int main()
 {
 	int nx = 500;
 	int ny = 500;
-	int ns = 100;
+	int ns = 10;
 
 	std::ofstream fileoutput;
 	fileoutput.open("image.ppm");

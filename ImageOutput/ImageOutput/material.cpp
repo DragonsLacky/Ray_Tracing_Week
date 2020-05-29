@@ -47,15 +47,12 @@ bool refract(const vec3& v, const vec3& n, float ni_over_nt, vec3& refracted)
 
 bool lambertian::scatter(const ray& r_in, const hit_record& rec, vec3& attenuation, ray& scattered, float& pdf) const
 {
-	vec3 direction;
-	do
-	{
-		direction = random_in_unit_sphere();
-	} while (dot(direction, rec.normal) < 0);
-	//vec3 target = rec.p + rec.normal + random_in_unit_sphere();
-	scattered = ray(rec.p, unit_vector(direction /*target - rec.p*/), r_in.time());
+	onb uvw;
+	uvw.build_from_w(rec.normal);
+	vec3 direction = uvw.local(random_cosine_direction());
+	scattered = ray(rec.p, unit_vector(direction), r_in.time());
 	attenuation = albedo->value(rec.u, rec.v ,rec.p);
-	pdf =  0.5 * M_PI; //dot(rec.normal, scattered.direction()) / M_PI;
+	pdf = dot(uvw.w(), scattered.direction()) / M_PI;
 	return true;
 }
 

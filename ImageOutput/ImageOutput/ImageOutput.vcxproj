@@ -160,6 +160,7 @@
     <ClCompile Include="hitable_list.cpp" />
     <ClCompile Include="ImageOutput.cpp" />
     <ClCompile Include="material.cpp" />
+    <ClCompile Include="onb.cpp" />
     <ClCompile Include="perlin.cpp" />
     <ClCompile Include="ray.cpp" />
     <ClCompile Include="rectangle.cpp" />
@@ -177,6 +178,7 @@
     <ClInclude Include="box.h" />
     <ClInclude Include="bvh.h" />
     <ClInclude Include="camera.h" />
+    <ClInclude Include="onb.h" />
     <ClInclude Include="rectangle.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="hitable.h" />

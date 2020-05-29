@@ -31,3 +31,20 @@ vec3 hittable_pdf::generate() const
 {
     return obj->random(origin);
 }
+
+float mixture_pdf::value(const vec3& direction) const
+{
+    return 0.5 * p[0]->value(direction) + 0.5 * p[1]->value(direction);
+}
+vec3 mixture_pdf::generate() const
+{
+    float random = static_cast<float>(rand()) / static_cast<float>(RAND_MAX + 1);
+    if (random < 0.5f)
+    {
+        return p[0]->generate();
+    }
+    else
+    {
+        return p[1]->generate();
+    }
+}

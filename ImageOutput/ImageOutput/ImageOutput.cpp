@@ -31,9 +31,12 @@ vec3 color(const ray& r, hitable *world, int depth)
 		if (depth < 50 && rec.mat_ptr->scatter(r, rec, attenuation, scattered, pdf_val))
 		{
 			hitable* light_shape = new xz_rectangle(213, 343, 227, 332, 554, 0);
-			hittable_pdf p(light_shape, rec.p);
+			hittable_pdf p0(light_shape, rec.p);
+			cosine_pdf p1(rec.normal);
+			mixture_pdf p(&p0, &p1);
 			scattered = ray(rec.p, p.generate(), r.time());
 			pdf_val = p.value(scattered.direction());
+			delete light_shape;
 			return emission + attenuation * rec.mat_ptr->scattering_pdf(r,rec,scattered) * color(scattered, world, depth + 1) / pdf_val;
 		}
 		else {
@@ -254,7 +257,7 @@ int main()
 {
 	int nx = 500;
 	int ny = 500;
-	int ns = 10;
+	int ns = 1000;
 
 	std::ofstream fileoutput;
 	fileoutput.open("image.ppm");

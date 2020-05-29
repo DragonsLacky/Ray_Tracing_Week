@@ -29,3 +29,13 @@ public:
 	hitable* obj;
 	vec3 origin;
 };
+
+
+class mixture_pdf : public pdf
+{
+public:
+	mixture_pdf(pdf* p0, pdf* p1) { p[0] = p0; p[1] = p1; }
+	virtual float value(const vec3& direction) const;
+	virtual vec3 generate() const;
+	pdf* p[2];
+};

@@ -30,23 +30,8 @@ vec3 color(const ray& r, hitable *world, int depth)
 		float pdf_val;
 		if (depth < 50 && rec.mat_ptr->scatter(r, rec, attenuation, scattered, pdf_val))
 		{
-			/*vec3 on_light = vec3(213 + get_random_num() * (343 - 213), 554, 227 + get_random_num() * (332 - 227));
-			vec3 to_light = on_light - rec.p;
-			float distance_sqr = to_light.squared_length();
-			to_light.make_unit_vector();
-			if (dot(to_light, rec.normal) < 0)
-			{
-				return emission;
-			}
-			float light_area = (343 - 213) * (332 - 227);
-			float light_cosine = fabs(to_light.y());
-			if (light_cosine < 0.000001)
-			{
-				return emission;
-			}
-			pdf_val = distance_sqr / (light_cosine * light_area);
-			scattered = ray(rec.p, to_light, r.time());*/
-			cosine_pdf p(rec.normal);
+			hitable* light_shape = new xz_rectangle(213, 343, 227, 332, 554, 0);
+			hittable_pdf p(light_shape, rec.p);
 			scattered = ray(rec.p, p.generate(), r.time());
 			pdf_val = p.value(scattered.direction());
 			return emission + attenuation * rec.mat_ptr->scattering_pdf(r,rec,scattered) * color(scattered, world, depth + 1) / pdf_val;

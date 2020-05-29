@@ -65,6 +65,33 @@ bool xz_rectangle::bounding_box(float t0, float t1, boundary& box)const
 	return true;
 }
 
+float xz_rectangle::pdf_value(const vec3& o, const vec3& v) const
+{
+	hit_record rec;
+	if (this->hit(ray(o, v), 0.001, FLT_MAX, rec))
+	{
+		float area = (x1 - x0) * (z1 - z0);
+		float distance_sqr = rec.t * rec.t * v.squared_length();
+		float cosine = fabs(dot(v, rec.normal) / v.length());
+		return distance_sqr / (cosine * area);
+	}
+	else
+	{
+		return 0;
+	}
+}
+vec3 xz_rectangle::random(const vec3& o) const
+{
+	float random1 = static_cast<float>(rand()) / static_cast<float>(RAND_MAX + 1);
+	float random2 = static_cast<float>(rand()) / static_cast<float>(RAND_MAX + 1);
+	float random3 = static_cast<float>(rand()) / static_cast<float>(RAND_MAX + 1);
+
+
+
+	vec3 random_point = vec3(x0 + random1 * (x1 - x0), k, z0 + random2 * (z1 - z0));
+	return random_point - o;
+}
+
 bool yz_rectangle::hit(const ray& r, float t_min, float t_max, hit_record& rec) const
 {
 	float t = (k - r.origin().x()) / r.direction().x();

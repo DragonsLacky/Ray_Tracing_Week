@@ -12,6 +12,7 @@
 #include "transformations.h"
 #include "volume.h"
 #include "bvh.h"
+#include "pdf.h"
 
 float get_random_num()
 {
@@ -26,10 +27,10 @@ vec3 color(const ray& r, hitable *world, int depth)
 		ray scattered;
 		vec3 attenuation;
 		vec3 emission = rec.mat_ptr->emitted(r, rec, rec.u, rec.v, rec.p);
-		float pdf;
-		if (depth < 50 && rec.mat_ptr->scatter(r, rec, attenuation, scattered, pdf))
+		float pdf_val;
+		if (depth < 50 && rec.mat_ptr->scatter(r, rec, attenuation, scattered, pdf_val))
 		{
-			vec3 on_light = vec3(213 + get_random_num() * (343 - 213), 554, 227 + get_random_num() * (332 - 227));
+			/*vec3 on_light = vec3(213 + get_random_num() * (343 - 213), 554, 227 + get_random_num() * (332 - 227));
 			vec3 to_light = on_light - rec.p;
 			float distance_sqr = to_light.squared_length();
 			to_light.make_unit_vector();
@@ -43,9 +44,12 @@ vec3 color(const ray& r, hitable *world, int depth)
 			{
 				return emission;
 			}
-			pdf = distance_sqr / (light_cosine * light_area);
-			scattered = ray(rec.p, to_light, r.time());
-			return emission + attenuation * rec.mat_ptr->scattering_pdf(r,rec,scattered) * color(scattered, world, depth + 1) / pdf;
+			pdf_val = distance_sqr / (light_cosine * light_area);
+			scattered = ray(rec.p, to_light, r.time());*/
+			cosine_pdf p(rec.normal);
+			scattered = ray(rec.p, p.generate(), r.time());
+			pdf_val = p.value(scattered.direction());
+			return emission + attenuation * rec.mat_ptr->scattering_pdf(r,rec,scattered) * color(scattered, world, depth + 1) / pdf_val;
 		}
 		else {
 			return emission;

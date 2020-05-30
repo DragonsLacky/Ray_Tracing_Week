@@ -247,7 +247,7 @@ int main()
 {
 	int nx = 500;
 	int ny = 500;
-	int ns = 100;
+	int ns = 1000;
 
 	std::ofstream fileoutput;
 	fileoutput.open("image.ppm");

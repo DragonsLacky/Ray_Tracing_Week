@@ -29,7 +29,7 @@ rotate_y::rotate_y(hitable* p, float angle)
 	cos_theta = cos(angle_radians);
 	hasbox = obj->bounding_box(0.0f, 1.0f, b_box);
 	vec3 min(FLT_MAX, FLT_MAX, FLT_MAX);
-	vec3 max(FLT_MIN, FLT_MIN, FLT_MIN);
+	vec3 max(-FLT_MAX, -FLT_MAX, -FLT_MAX);
 
 	for (int i = 0; i < 2; i++)
 	{
@@ -78,9 +78,11 @@ bool rotate_y::hit(const ray& r, float t_min, float t_max, hit_record& rec) cons
 		vec3 p = rec.p;
 		vec3 normal = rec.normal;
 		p[0] = cos_theta * rec.p.x() + sin_theta * rec.p.z();
-		p[1] = -sin_theta * rec.p.x() + cos_theta * rec.p.z();
+		p[2] = -sin_theta * rec.p.x() + cos_theta * rec.p.z();
 		normal[0] = cos_theta * rec.normal.x() + sin_theta * rec.normal.z();
-		normal[1] = -sin_theta * rec.normal.x() + cos_theta * rec.normal.z();
+		normal[2] = -sin_theta * rec.normal.x() + cos_theta * rec.normal.z();
+		rec.p = p;
+		rec.normal = normal;
 		return true;
 	}
 	else return false;

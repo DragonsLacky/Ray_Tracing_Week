@@ -164,9 +164,10 @@ hitable* cornell_box(camera** cam, float aspect ,hitable** light_shape)
 	list[i++] = new xz_rectangle(0, 555, 0, 555, 0, white);
 	list[i++] = new flip_normals(new xy_rectangle(0, 555, 0, 555, 555, white));
 
-	list[i++] = new translate(new rotate_y(new box(vec3(0.0, 0.0, 0.0), vec3(165, 165, 165), white), -18), vec3(130, 0, 65));
-	list[i++] = new translate(new rotate_y(new box(vec3(0.0, 0.0, 0.0), vec3(165, 330, 165), aluminium),15), vec3(265, 0, 295));
-	
+	//list[i++] = new translate(new rotate_y(new box(vec3(0.0, 0.0, 0.0), vec3(165, 165, 165), white), -18), vec3(130, 0, 65));
+	list[i++] = new translate(new rotate_y(new box(vec3(0.0, 0.0, 0.0), vec3(165, 330, 165), white),15), vec3(265, 0, 295));
+	list[i++] = new sphere(vec3(190, 90, 190), 90, new  dielectric(1.5));
+
 	vec3 look_from(278.0f, 278.0f, -800.0f);
 	vec3 look_at(278.0f, 278.0f, 0.0f);
 	float dist_to_focus = 10.0f;
@@ -279,6 +280,7 @@ int main()
 	
 	camera** cam = new camera*[0];
 	hitable** light_shape = new hitable*[0];
+	hitable*  glass_sphere= new sphere(vec3(190, 90, 190), 90, new  dielectric(1.5));
 
 	hitable* world = cornell_box(cam, nx / ny, light_shape);
 

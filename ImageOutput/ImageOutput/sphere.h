@@ -2,6 +2,7 @@
 #include "hitable.h"
 #include <corecrt_math_defines.h>
 #include <math.h>
+#include "onb.h"
 
 class sphere : public hitable
 {
@@ -10,6 +11,8 @@ public:
 	sphere(vec3 cen, float r, material *mat) : center( cen ) , radius ( r ), mat_ptr(mat) {}
 	virtual bool hit(const ray& r, float t_min, float t_max, hit_record& rec) const;
 	virtual bool bounding_box(float t0, float t1, boundary& box) const;
+	float pdf_value(const vec3& o, const vec3& v) const;
+	vec3 random_dir(const vec3& o) const;
 	vec3 center;
 	float radius;
 	material* mat_ptr;
@@ -32,3 +35,4 @@ public:
 };
 
 void get_sphere_uv(const vec3& p, float& u, float& v);
+vec3 random_to_sphere(float radius, float distance_sqr);

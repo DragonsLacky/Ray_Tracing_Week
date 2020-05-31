@@ -32,28 +32,26 @@ float schlick(float cosine, float refraction_index)
 	return r0 + (1 - r0) * pow(1 - cosine, 5);
 }
 
-bool refract(const vec3& v, const vec3& n, float ni_over_nt, vec3& refracted)
+vec3 refract(const vec3& uv, const vec3& n, float ni_over_nt)
 {
-	vec3 uv = unit_vector(v);
-	float dt = dot(uv, n);
-	float discriminant = 1.0f - ni_over_nt * ni_over_nt *(1.0f - dt * dt);
+	float cosine = fmin(dot(-uv, n), 1.0);
+	vec3 r_out_parallel = ni_over_nt * (uv + n * cosine);
+	vec3 r_out_perp = -sqrt(1.0 - r_out_parallel.squared_length()) * n;
+	return r_out_parallel + r_out_perp;
+	/*float discriminant = 1.0f - ni_over_nt * ni_over_nt *(1.0f - dt * dt);
 	if (discriminant > 0)
 	{
-		refracted = ni_over_nt * (uv - n * dt) - n * sqrt(discriminant);
+		refracted =  - n * sqrt(discriminant);
 		return true;
 	}
-	else return false;
+	else return false;*/
 }
 
 bool lambertian::scatter(const ray& r_in, const hit_record& h_rec, scatter_record& s_rec) const
 {
-	/*onb uvw;
-	uvw.build_from_w(rec.normal);*/
 	s_rec.is_specular = false;
-	//vec3 direction = uvw.local(random_cosine_direction());
-	//scattered = ray(rec.p, unit_vector(direction), r_in.time());
 	s_rec.attenuation = albedo->value(h_rec.u, h_rec.v , h_rec.p);
-	s_rec.pdf_ptr = new cosine_pdf(h_rec.normal); /*dot(uvw.w(), s_rec.specular_ray.direction()) / M_PI;*/
+	s_rec.pdf_ptr = new cosine_pdf(h_rec.normal);
 	return true;
 }
 
@@ -72,43 +70,35 @@ bool dielectric::scatter(const ray& r_in, const hit_record& h_rec, scatter_recor
 {
 	s_rec.is_specular = true;
 	s_rec.pdf_ptr = nullptr;
-	vec3 outward_normal;
-	vec3 reflected = reflect(r_in.direction(), h_rec.normal);
-	float ni_over_nt;
 	s_rec.attenuation = vec3(1.0f, 1.0f, 1.0f);
-	vec3  refracted;
-	float reflect_prob;
-	float cosine;
-	if (dot(r_in.direction(), h_rec.normal) > 0)
-	{
-		outward_normal = -h_rec.normal;
-		ni_over_nt = refraction_index;
-		cosine = refraction_index * dot(r_in.direction(), h_rec.normal) / r_in.direction().length();
-	}
-	else {
-		outward_normal = h_rec.normal;
-		ni_over_nt = 1.0f / refraction_index;
-		cosine = - dot(r_in.direction(), h_rec.normal) / r_in.direction().length();
+	vec3 outward_normal;
+	vec3 unit_direction = unit_vector(r_in.direction());
 
-	}
-	if (refract(r_in.direction(), outward_normal, ni_over_nt, refracted)) 
+	float reflect_prob;
+	float ni_over_nt = (h_rec.face) ? (1.0 / refraction_index) : refraction_index;
+	float cosine = fmin(dot(-unit_direction, h_rec.normal), 1.0);
+	float sine = sqrt(1.0 - cosine * cosine);
+
+	if (ni_over_nt * sine > 1.0)
 	{
-		reflect_prob = schlick(cosine, refraction_index);
-		//scattered = ray(rec.p, refracted);
-	}
-	else {
+		vec3 reflected = reflect(unit_direction, h_rec.normal);
 		s_rec.specular_ray = ray(h_rec.p, reflected, r_in.time());
-		reflect_prob = 1.0f;
+		return true;
 	}
+	reflect_prob = schlick(cosine, ni_over_nt);
 	float random = static_cast<float>(rand()) / static_cast<float>(RAND_MAX + 1);
 	if (random < reflect_prob) 
 	{
+		vec3 reflected = reflect(unit_direction, h_rec.normal);
 		s_rec.specular_ray = ray(h_rec.p, reflected, r_in.time());
+		return true;
 	}
 	else {
+		vec3 refracted = refract(unit_direction, h_rec.normal, ni_over_nt);
 		s_rec.specular_ray = ray(h_rec.p, refracted, r_in.time());
+		return true;
 	}
-	return true;
+	
 }
 
 vec3 material::emitted(const ray& r_in, const hit_record& rec, float u, float v, const vec3& p) const

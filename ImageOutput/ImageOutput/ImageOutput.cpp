@@ -245,8 +245,8 @@ hitable* Full_scene()
 
 int main()
 {
-	int nx = 100;
-	int ny = 100;
+	int nx = 500;
+	int ny = 500;
 	int ns = 1000;
 
 	std::ofstream fileoutput;

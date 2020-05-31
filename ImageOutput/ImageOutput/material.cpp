@@ -55,7 +55,7 @@ bool lambertian::scatter(const ray& r_in, const hit_record& rec, vec3& attenuati
 	//vec3 target = rec.p + rec.normal + random_in_unit_sphere();
 	scattered = ray(rec.p, unit_vector(direction /*target - rec.p*/), r_in.time());
 	attenuation = albedo->value(rec.u, rec.v ,rec.p);
-	pdf =  0.5 * M_PI; //dot(rec.normal, scattered.direction()) / M_PI;
+	pdf =  0.5 / M_PI; //dot(rec.normal, scattered.direction()) / M_PI;
 	return true;
 }
 

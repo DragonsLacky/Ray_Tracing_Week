@@ -78,9 +78,11 @@ bool rotate_y::hit(const ray& r, float t_min, float t_max, hit_record& rec) cons
 		vec3 p = rec.p;
 		vec3 normal = rec.normal;
 		p[0] = cos_theta * rec.p.x() + sin_theta * rec.p.z();
-		p[1] = -sin_theta * rec.p.x() + cos_theta * rec.p.z();
+		p[2] = -sin_theta * rec.p.x() + cos_theta * rec.p.z();
 		normal[0] = cos_theta * rec.normal.x() + sin_theta * rec.normal.z();
-		normal[1] = -sin_theta * rec.normal.x() + cos_theta * rec.normal.z();
+		normal[2] = -sin_theta * rec.normal.x() + cos_theta * rec.normal.z();
+		rec.p = p;
+		rec.normal = normal;
 		return true;
 	}
 	else return false;

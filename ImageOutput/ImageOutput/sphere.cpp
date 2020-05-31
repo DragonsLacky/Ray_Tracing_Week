@@ -137,7 +137,7 @@ float sphere::pdf_value(const vec3& o, const vec3& v) const
 		return 0;
 	}
 }
-vec3 sphere::random_dir(const vec3& o) const
+vec3 sphere::random(const vec3& o) const
 {
 	vec3 direction = center - o;
 	float distance_sqr = direction.squared_length();

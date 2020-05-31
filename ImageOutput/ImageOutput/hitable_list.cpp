@@ -44,3 +44,20 @@ bool hitable_list::bounding_box(float t0, float t1, boundary& box) const
 
 	return true;
 }
+
+float hitable_list::pdf_value(const vec3& o, const vec3& v) const
+{
+	float weight = 1.0 / list_size;
+	float sum = 0;
+	for (int i = 0; i < list_size; i++)
+	{
+		sum += weight * list[i]->pdf_value(o, v);
+	}
+	return sum;
+}
+vec3 hitable_list::random(const vec3& o) const
+{
+	float random = static_cast<float>(rand()) / static_cast<float>(RAND_MAX + 1);
+	int index = static_cast<int>(random * list_size);
+	return list[index]->random(o);
+}

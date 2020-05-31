@@ -19,7 +19,7 @@ float get_random_num()
 	return static_cast<float>(rand()) / static_cast<float>(RAND_MAX + 1);
 }
 
-vec3 color(const ray& r, hitable *world, hitable* light_shape, int depth)
+vec3 color(const ray& r, hitable *world, hitable* lights, int depth)
 {
 	hit_record h_rec;
 	if (world->hit(r, 0.001, FLT_MAX, h_rec )) 
@@ -31,16 +31,16 @@ vec3 color(const ray& r, hitable *world, hitable* light_shape, int depth)
 		{
 			if (s_rec.is_specular)
 			{
-				return s_rec.attenuation * color(s_rec.specular_ray, world, light_shape, depth + 1);
+				return s_rec.attenuation * color(s_rec.specular_ray, world, lights, depth + 1);
 			}
 			else
 			{
-				hittable_pdf p0(light_shape, h_rec.p);
+				hittable_pdf p0(lights, h_rec.p);
 				mixture_pdf p(&p0, s_rec.pdf_ptr);
 				ray scattered = ray(h_rec.p, p.generate(), r.time());
 				pdf_val = p.value(scattered.direction());
 				delete s_rec.pdf_ptr;
-				return emission + s_rec.attenuation * h_rec.mat_ptr->scattering_pdf(r,h_rec,scattered) * color(scattered, world, light_shape, depth + 1) / pdf_val;
+				return emission + s_rec.attenuation * h_rec.mat_ptr->scattering_pdf(r,h_rec,scattered) * color(scattered, world, lights, depth + 1) / pdf_val;
 			}
 		}
 		else {
@@ -143,9 +143,10 @@ hitable* simple_light()
 	return new hitable_list(list, 4);
 }
 
-hitable* cornell_box(camera** cam, float aspect ,hitable** light_shape)
+hitable* cornell_box(camera** cam, float aspect ,hitable** lights_list)
 {
 	hitable** list = new hitable * [50];
+	hitable** lights = new hitable * [2];
 	int i = 0;
 
 
@@ -155,18 +156,20 @@ hitable* cornell_box(camera** cam, float aspect ,hitable** light_shape)
 	material* light = new diffuse_light(new constant_texture(vec3(15.0f, 15.0f, 15.0f)));
 	material* aluminium = new metal(vec3(0.8f, 0.85f, 0.88f), 0.0);
 
-	*light_shape = new xz_rectangle(213, 343, 227, 332, 554, light);
+	lights[0] = new xz_rectangle(213, 343, 227, 332, 554, light);
 
 	list[i++] = new flip_normals( new yz_rectangle(0, 555, 0, 555, 555, green));
 	list[i++] = new yz_rectangle(0, 555, 0, 555, 0, red);
-	list[i++] = new flip_normals(*light_shape);
+	list[i++] = new flip_normals(lights[0]);
 	list[i++] = new flip_normals(new xz_rectangle(0, 555, 0, 555, 555, white));
 	list[i++] = new xz_rectangle(0, 555, 0, 555, 0, white);
 	list[i++] = new flip_normals(new xy_rectangle(0, 555, 0, 555, 555, white));
 
 	//list[i++] = new translate(new rotate_y(new box(vec3(0.0, 0.0, 0.0), vec3(165, 165, 165), white), -18), vec3(130, 0, 65));
 	list[i++] = new translate(new rotate_y(new box(vec3(0.0, 0.0, 0.0), vec3(165, 330, 165), white),15), vec3(265, 0, 295));
-	list[i++] = new sphere(vec3(190, 90, 190), 90, new  dielectric(1.5));
+	hitable* glass_sphere = new sphere(vec3(190, 90, 190), 90, new  dielectric(1.5));
+	list[i++] = glass_sphere;
+	lights[1] = glass_sphere;
 
 	vec3 look_from(278.0f, 278.0f, -800.0f);
 	vec3 look_at(278.0f, 278.0f, 0.0f);
@@ -175,6 +178,7 @@ hitable* cornell_box(camera** cam, float aspect ,hitable** light_shape)
 	float vfov = 40.0f;
 
 	*cam = new camera(look_from, look_at, vec3(0.0f, 1.0f, 0.0f), vfov, aspect, aperture, dist_to_focus, 0.0f, 1.0f);
+	*lights_list = new hitable_list(lights, 2);
 
 	return new hitable_list(list, i);
 }
@@ -267,22 +271,11 @@ int main()
 	float R = cos(M_PI / 4);
 
 	fileoutput << "P3\n" << nx << " " << ny << "\n255\n";
-
-	//hitable* list[5];
-	//list[0] = new sphere(vec3(-R, 0, -1), R, new lambertian(vec3(0, 0, 1)));
-	//list[1] = new sphere(vec3( R, 0, -1), R, new lambertian(vec3(1, 0, 0)));
-
-	/*list[0] = new sphere(vec3(0, 0, -1), 0.5, new lambertian(vec3(0.1, 0.2, 0.5)));
-	list[1] = new sphere(vec3(0, -100.5, -1), 100, new lambertian(vec3(0.8, 0.8, 0.0)));
-	list[2] = new sphere(vec3(1.0f, 0.0f, -1.0f), 0.5, new metal(vec3(0.8, 0.6, 0.2),0.3));
-	list[3] = new sphere(vec3(-1.0, 0.0f, -1.0f), 0.5, new dielectric(1.5));
-	list[4] = new sphere(vec3(-1.0, 0.0f, -1.0f), -0.45, new dielectric(1.5));*/
 	
-	camera** cam = new camera*[0];
-	hitable** light_shape = new hitable*[0];
-	hitable*  glass_sphere= new sphere(vec3(190, 90, 190), 90, new  dielectric(1.5));
+	camera** cam = new camera * [0];
+	hitable** lights = new hitable * [0];
 
-	hitable* world = cornell_box(cam, nx / ny, light_shape);
+	hitable* world = cornell_box(cam, nx / ny, lights);
 
 	vec3 look_from(278.0f, 278.0f, -800.0f);
 	vec3 look_at(278.0f, 278.0f, 0.0f);
@@ -311,7 +304,7 @@ int main()
 			float v = static_cast<float>(i + random) / static_cast<float>(ny);
 			ray r = (*cam)->get_ray(u, v);
 			vec3 p = r.point(2.0);
-			col += color(r, world, *light_shape, 0);
+			col += color(r, world, *lights, 0);
 
 			}
 			

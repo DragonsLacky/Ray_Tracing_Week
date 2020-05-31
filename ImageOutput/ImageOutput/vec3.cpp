@@ -121,3 +121,11 @@ vec3 unit_vector(vec3 v)
     return v / v.length();
 }
 
+vec3 de_nan(const vec3& c)
+{
+    vec3 tmp = c;
+    if (!(tmp[0] == tmp[0])) tmp[0] = 0;
+    if (!(tmp[1] == tmp[1])) tmp[1] = 0;
+    if (!(tmp[2] == tmp[2])) tmp[2] = 0;
+    return tmp;
+}

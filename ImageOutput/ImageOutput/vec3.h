@@ -52,3 +52,4 @@ vec3 operator/(const vec3& v, float t);
 vec3 unit_vector(vec3 v);
 float dot(const vec3& v1, const vec3& v2);
 vec3 cross(const vec3& v1, const vec3& v2);
+vec3 de_nan(const vec3& c);

@@ -268,30 +268,15 @@ int main()
 	std::ofstream fileoutput;
 	fileoutput.open("image.ppm");
 
-	float R = cos(M_PI / 4);
+	float Re = cos(M_PI / 4);
 
 	fileoutput << "P3\n" << nx << " " << ny << "\n255\n";
 	
 	camera** cam = new camera * [0];
 	hitable** lights = new hitable * [0];
-
 	hitable* world = cornell_box(cam, nx / ny, lights);
-
-	vec3 look_from(278.0f, 278.0f, -800.0f);
-	vec3 look_at(278.0f, 278.0f, 0.0f);
-	float dist_to_focus = 10.0f;
-	float aperture = 0.0f;
-	float vfov = 40.0f;
-	float aspect = nx / ny;
-	/*vec3 look_from(478.0f, 278.0f, -600.0f);
-	vec3 look_at(278.0f, 278.0f, 0.0f);
-	float dist_to_focus = 10.0f;
-	float aperture = 0.0f;*/
-
-	//camera cam(look_from, look_at, vec3(0.0f, 1.0f, 0.0f), 40, nx / ny, aperture, dist_to_focus, 0.0f, 1.0f); 
 		
 	int count = 0;
-
 	for (int i = ny - 1; i >= 0; i--)
 	{
 		for (int j = 0; j < nx; j++)
@@ -304,7 +289,7 @@ int main()
 			float v = static_cast<float>(i + random) / static_cast<float>(ny);
 			ray r = (*cam)->get_ray(u, v);
 			vec3 p = r.point(2.0);
-			col += color(r, world, *lights, 0);
+			col += de_nan(color(r, world, *lights, 0));
 
 			}
 			
